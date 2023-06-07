@@ -12,6 +12,12 @@ class ChatSocket:
     def __init__(self, sock: socket):
         self.sock = sock
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.sock.close()
+
     def send(self, msg):
         payload_length = len(msg)
         length_code = str(payload_length).zfill(4)
@@ -48,8 +54,6 @@ class ChatSocket:
         """
         # Get the length code first
         payload_length = int(self.recv_length(4))
-
-        # Special handling for length codes goes here
 
         # Get the payload
         return self.recv_length(payload_length)

@@ -8,14 +8,16 @@
 
 
 import socket
+
+from chat_handler import ChatHandler
 from chat_socket import *
 
 
 hostname = "localhost"
 port = 59124
 
+# Establish Server Socket and listen for a connection
 try:
-    # Establish server socket
     # create an INET, STREAMing socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # We will reuse this socket
@@ -38,4 +40,8 @@ except socket.error:
 
 connection = ChatSocket(clientsocket)
 
-print(connection.recv())
+# Pass our connection off to chat handler so it can mediate the conversation w/ server
+# Client goes first by default
+
+handler = ChatHandler(connection, False)
+handler.mediate_chat()

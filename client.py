@@ -8,6 +8,7 @@
 
 import socket
 from chat_socket import *
+from chat_handler import *
 
 host = "localhost"
 port = 59124
@@ -21,6 +22,11 @@ try:
 except socket.error:
     raise RuntimeError(f"Unable to connect to {host}:{port} ")
 
-chat_socket = ChatSocket(s)
-chat_socket.send("Hello there test message")
+connection = ChatSocket(s)
+
+# Pass our connection off to chat handler so it can mediate the conversation w/ server
+# Client goes first per specifications
+
+handler = ChatHandler(connection, True)
+handler.mediate_chat()
 
