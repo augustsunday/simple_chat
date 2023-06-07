@@ -1,7 +1,8 @@
 # Author: Colin Cummins
 # Github Username: augustsunday
 # Date: 6/7/2023
-# Description: The chat handler class accepts a ChatSocket and uses it to mediate a conversation.
+# Description: The chat handler class accepts a ChatSocket and uses it to mediate a conversation,
+# implementing turn taking while sending and receiving messages, handling /q commands to quit, and /playrps
 
 class ChatHandler:
     def __init__(self, connection, myturn):

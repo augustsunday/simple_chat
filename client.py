@@ -1,7 +1,8 @@
 # Author: Colin Cummins
 # Github Username: augustsunday
 # Date: 6/6/2023
-# Description:
+# Description: Client program for chat
+
 # Citations -
 # The code to establish and connect sockets was adapted from the 'Socket Programming HOWTO'
 # by Gordon McMillan https://docs.python.org/3/howto/sockets.html
