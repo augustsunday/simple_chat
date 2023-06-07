@@ -30,11 +30,12 @@ class ChatHandler:
                     message = input("Enter Message> ")
                     self.connection.send(message)
                     if message == '/q':
-                        print('Exiting chat...')
+                        print('<Exiting chat>')
+                        return
                 else:
                     message = self.connection.recv()
                     if message == '/q':
-                        print('Chat connection closed by partner')
+                        print('<Chat connection closed by partner>')
                         return
                     print("REPLY >", message)
 
