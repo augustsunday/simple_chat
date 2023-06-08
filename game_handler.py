@@ -4,6 +4,7 @@
 # Description: Takes over chat and runs a game of rock/paper/scissors until someone quits
 PROMPT_MESSAGE = 'Choose your play: (r)ock, (p)aper, (s)cissors'
 
+
 class GameHandler:
     from rps_throw import RpsError, RpsThrow
     def __init__(self, current_turn, connection):
@@ -19,7 +20,6 @@ class GameHandler:
 
         if self.current_turn == 'server':
             return input(PROMPT_MESSAGE)
-
 
     def play_rps(self):
         p1 = self.current_turn
