@@ -9,6 +9,19 @@ import socket
 
 
 class ChatSocket:
+    """
+    The chat socket sends and receives messages.
+    Messages consist of a string of utf-8 ascii characters of the format:
+    LLLLCCCC[DDD...]
+
+    L = Length code in decimal, left-filled with zeroes. This is the length of the actual data portion of the message.
+    C = Special instruction codes:
+        'XXXX' = Normal transmission. Do not transmit - keep connection clear for further incoming transmissions.
+        'OVER' = Transmission complete. Ready to receive replies.
+        'QUIT' = Transmitter has quit the chat and closed their connection. (Usually a signal for receiver to quit too)
+        'PLAY' = Transmitter requesting switch to game mode.
+        'EXIT' = Transmitter requesting end game mode.
+    """
     def __init__(self, sock: socket):
         self.sock = sock
 
@@ -18,11 +31,19 @@ class ChatSocket:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.sock.close()
 
-    def send(self, msg):
+    def send(self, msg, code="OVER"):
+        """
+        Sends a fully formed message with length code and instruction code
+        Code is set for "OVER" by default since back-and-forth conversation is the norm
+        Use "XXXX" for sending multiple messages, broadcasting, etc.
+        :param msg: Human-readable content of message
+        :param code: Special instructions to receiving handler
+        :return: None
+        """
         payload_length = len(msg)
         length_code = str(payload_length).zfill(4)
-        msg = length_code + msg
-        total_length = payload_length + 4
+        msg = length_code + code + msg
+        total_length = payload_length + 8
 
         total_sent = 0
         while total_sent < total_length:
@@ -49,11 +70,13 @@ class ChatSocket:
 
     def recv(self):
         """
-        Receives and returns a message of arbitrary length from other side of connection
-        :return: Message from other side of connection [str]
+        :return:
         """
         # Get the length code first
         payload_length = int(self.recv_length(4))
 
-        # Get the payload
-        return self.recv_length(payload_length)
+        # Get the message code
+        code = self.recv_length(4)
+        message = self.recv_length(payload_length)
+
+        return code, message

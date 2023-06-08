@@ -3,9 +3,11 @@
 # Date: 6/7/2023
 # Description: The chat handler class accepts a ChatSocket and uses it to mediate a conversation,
 # implementing turn taking while sending and receiving messages, handling /q commands to quit, and /playrps
+from game_handler import *
+
 
 class ChatHandler:
-    def __init__(self, connection, mode, current_turn ='client'):
+    def __init__(self, connection, mode, current_turn='client'):
         """
         Class constructor
         :param connection: a ChatSocket to use for sending and receiving messages
@@ -14,7 +16,7 @@ class ChatHandler:
         'server' - Server sends next message
         """
         self.connection = connection
-        self.id = mode
+        self.mode = mode
         self.current_turn = current_turn
 
         print("Welcome to SimpleChat")
@@ -27,7 +29,10 @@ class ChatHandler:
         print()
 
     def ismyturn(self):
-        return self.id == self.current_turn
+        return self.mode == self.current_turn
+
+    def isserver(self):
+        return self.mode == "server"
 
     def endturn(self):
         self.current_turn = 'client' if self.current_turn == 'server' else 'server'
@@ -45,15 +50,28 @@ class ChatHandler:
             while True:
                 if self.ismyturn():
                     message = input("Enter Message> ")
-                    self.connection.send(message)
-                    if message == '/q':
+                    if message == '/p' and self.isserver():
+                        self.endturn()
+                        game = GameHandler(self.current_turn, self.connection)
+                        self.current_turn = game.play_rps()
+                    elif message == '/q':
+                        self.connection.send("", "QUIT")
                         print('<Exiting chat>')
                         return
+                    else:
+                        self.connection.send(message)
+                        self.endturn()
                 else:
-                    message = self.connection.recv()
-                    if message == '/q':
+                    code, message = self.connection.recv()
+                    if code == 'PLAY' and self.isserver():
+                        self.endturn()
+                        game = GameHandler(self.current_turn, self.connection)
+                        self.current_turn = game.play_rps()
+                    elif code == "QUIT":
                         print('<Chat connection closed by partner>')
                         return
-                    print("REPLY >", message)
-
-                self.endturn()
+                    elif code == "OVER":
+                        print("REPLY >", message)
+                        self.endturn()
+                    elif code == "XXXX":
+                        print("REPLY >", message)
