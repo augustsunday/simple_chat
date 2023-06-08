@@ -5,16 +5,32 @@
 # implementing turn taking while sending and receiving messages, handling /q commands to quit, and /playrps
 
 class ChatHandler:
-    def __init__(self, connection, myturn):
+    def __init__(self, connection, mode, current_turn ='client'):
         """
         Class constructor
         :param connection: a ChatSocket to use for sending and receiving messages
-        :param myturn: Is it this handler's turn to talk? [bool]
+        :param mode: Is this handler a 'client' or a 'server'. Also used for managing turn-taking.
         'client' - Client sends next message
         'server' - Server sends next message
         """
         self.connection = connection
-        self.myturn = myturn
+        self.id = mode
+        self.current_turn = current_turn
+
+        print("Welcome to SimpleChat")
+        print("You may enter messages when the prompt appears")
+        print()
+        print("Special Commands:")
+        print("/q.....(q)uit Chat")
+        print("/p.....(p)lay 'Rock, Paper, Scissors' with chat partner")
+        print("/x.....e(x)it 'Rock,Paper,Scissors' game")
+        print()
+
+    def ismyturn(self):
+        return self.id == self.current_turn
+
+    def endturn(self):
+        self.current_turn = 'client' if self.current_turn == 'server' else 'server'
 
     def mediate_chat(self):
         """
@@ -27,7 +43,7 @@ class ChatHandler:
 
         with self.connection:
             while True:
-                if self.myturn:
+                if self.ismyturn():
                     message = input("Enter Message> ")
                     self.connection.send(message)
                     if message == '/q':
@@ -40,4 +56,4 @@ class ChatHandler:
                         return
                     print("REPLY >", message)
 
-                self.myturn = not self.myturn
+                self.endturn()

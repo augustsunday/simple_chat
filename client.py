@@ -28,6 +28,6 @@ connection = ChatSocket(s)
 # Pass our connection off to chat handler so it can mediate the conversation w/ server
 # Client goes first per specifications
 
-handler = ChatHandler(connection, True)
+handler = ChatHandler(connection, 'client')
 handler.mediate_chat()
 

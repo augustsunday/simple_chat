@@ -44,5 +44,5 @@ connection = ChatSocket(clientsocket)
 # Pass our connection off to chat handler so it can mediate the conversation w/ server
 # Client goes first by default
 
-handler = ChatHandler(connection, False)
+handler = ChatHandler(connection, 'server')
 handler.mediate_chat()
