@@ -15,7 +15,7 @@ from chat_socket import *
 
 
 hostname = "localhost"
-port = 59124
+port = 59125
 
 # Establish Server Socket and listen for a connection
 try:
@@ -44,5 +44,5 @@ connection = ChatSocket(clientsocket)
 # Pass our connection off to chat handler so it can mediate the conversation w/ server
 # Client goes first by default
 
-handler = ChatHandler(connection, 'server')
+handler = ChatHandler(connection, 'RECV', True)
 handler.mediate_chat()

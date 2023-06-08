@@ -5,19 +5,22 @@
 # implementing turn taking while sending and receiving messages, handling /q commands to quit, and /playrps
 from game_handler import *
 
+max_message_len = 4096
+
 
 class ChatHandler:
-    def __init__(self, connection, mode, current_turn='client'):
+    def __init__(self, connection, mode, server=False):
         """
         Class constructor
         :param connection: a ChatSocket to use for sending and receiving messages
-        :param mode: Is this handler a 'client' or a 'server'. Also used for managing turn-taking.
-        'client' - Client sends next message
-        'server' - Server sends next message
+        :param mode: Are we accepting messages, or is the channel clear for us to transmit?
+                    one of 'RECV' or 'XMIT'
+        :param server: Is this handler running for a server? Mostly used to determine how to handle
+        requests to play a game [bool]
         """
         self.connection = connection
         self.mode = mode
-        self.current_turn = current_turn
+        self.server = server
 
         print("Welcome to SimpleChat")
         print("You may enter messages when the prompt appears")
@@ -28,14 +31,11 @@ class ChatHandler:
         print("/x.....e(x)it 'Rock,Paper,Scissors' game")
         print()
 
-    def ismyturn(self):
-        return self.mode == self.current_turn
+    def is_server(self):
+        return self.server
 
-    def isserver(self):
-        return self.mode == "server"
-
-    def endturn(self):
-        self.current_turn = 'client' if self.current_turn == 'server' else 'server'
+    def flip_mode(self):
+        self.mode = 'XMIT' if self.mode == 'RECV' else 'RECV'
 
     def mediate_chat(self):
         """
@@ -48,30 +48,24 @@ class ChatHandler:
 
         with self.connection:
             while True:
-                if self.ismyturn():
+                if self.mode == 'XMIT':
                     message = input("Enter Message> ")
-                    if message == '/p' and self.isserver():
-                        self.endturn()
-                        game = GameHandler(self.current_turn, self.connection)
-                        self.current_turn = game.play_rps()
-                    elif message == '/q':
+                    if message == '/q':
                         self.connection.send("", "QUIT")
                         print('<Exiting chat>')
                         return
                     else:
                         self.connection.send(message)
-                        self.endturn()
-                else:
+                        self.flip_mode()
+                elif self.mode == 'RECV':
                     code, message = self.connection.recv()
-                    if code == 'PLAY' and self.isserver():
-                        self.endturn()
-                        game = GameHandler(self.current_turn, self.connection)
-                        self.current_turn = game.play_rps()
-                    elif code == "QUIT":
+                    if code == "QUIT":
                         print('<Chat connection closed by partner>')
                         return
                     elif code == "OVER":
                         print("REPLY >", message)
-                        self.endturn()
+                        self.flip_mode()
                     elif code == "XXXX":
                         print("REPLY >", message)
+                    else:
+                        raise RuntimeError

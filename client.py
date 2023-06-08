@@ -12,7 +12,7 @@ from chat_socket import *
 from chat_handler import *
 
 host = "localhost"
-port = 59124
+port = 59125
 
 try:
     # create an INET, STREAMing socket
@@ -28,6 +28,6 @@ connection = ChatSocket(s)
 # Pass our connection off to chat handler so it can mediate the conversation w/ server
 # Client goes first per specifications
 
-handler = ChatHandler(connection, 'client')
+handler = ChatHandler(connection, 'XMIT', False)
 handler.mediate_chat()
 

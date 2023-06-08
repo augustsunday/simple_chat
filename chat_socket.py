@@ -31,7 +31,7 @@ class ChatSocket:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.sock.close()
 
-    def send(self, msg, code="OVER"):
+    def send(self, msg="", code="OVER"):
         """
         Sends a fully formed message with length code and instruction code
         Code is set for "OVER" by default since back-and-forth conversation is the norm
