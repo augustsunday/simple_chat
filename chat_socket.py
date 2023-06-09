@@ -2,8 +2,7 @@
 # Github Username: augustsunday
 # Date: 6/6/2023
 # Description:
-# Citations:
-# This Class is adapted from the 'MySocket' Class in 'Socket Programming HOWTO' by Gordon McMillan
+# Citations: Adapted from the 'MySocket' Class in 'Socket Programming HOWTO' by Gordon McMillan
 # https://docs.python.org/3/howto/sockets.html
 import socket
 
