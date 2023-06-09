@@ -17,6 +17,7 @@ class ChatSocket:
     L = Length code in decimal, left-filled with zeroes. This is the length of the actual data portion of the message.
     C = Special instruction codes:
         'XXXX' = Normal transmission. Do not transmit - keep connection clear for further incoming transmissions.
+        'WAKE' = No message content, just wake up by going into XMIT mode.
         'OVER' = Transmission complete. Ready to receive replies.
         'QUIT' = Transmitter has quit the chat and closed their connection. (Usually a signal for receiver to quit too)
         'PLAY' = Transmitter requesting switch to game mode.

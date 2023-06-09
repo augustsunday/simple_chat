@@ -62,6 +62,8 @@ class ChatHandler:
                     if code == "QUIT":
                         print('<Chat connection closed by partner>')
                         return
+                    elif code == "WAKE":
+                        self.mode == 'XMIT'
                     elif code == "OVER":
                         print("REPLY >", message)
                         self.flip_mode()
