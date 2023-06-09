@@ -5,8 +5,6 @@
 # implementing turn taking while sending and receiving messages, handling /q commands to quit, and /playrps
 from game_handler import *
 
-max_message_len = 4096
-
 
 class ChatHandler:
     def __init__(self, connection, mode, server=False):
@@ -28,7 +26,6 @@ class ChatHandler:
         print("Special Commands:")
         print("/q.....(q)uit Chat")
         print("/p.....(p)lay 'Rock, Paper, Scissors' with chat partner")
-        print("/x.....e(x)it 'Rock,Paper,Scissors' game")
         print()
 
     def is_server(self):
@@ -36,6 +33,28 @@ class ChatHandler:
 
     def flip_mode(self):
         self.mode = 'XMIT' if self.mode == 'RECV' else 'RECV'
+
+    def handle_game_exit(self, game_exit_status):
+        """
+        Passes control back to ChatHandler after GameHandler is done
+        When we leave the game, both client and server should be in RECV mode
+        If the client _exits_ the game, chat control is given back to server, and vice versa
+        If either quits the game, final closing messages are sent and the chat_handler shuts down
+        :param game_exit_status:
+        :return:
+        """
+        if game_exit_status == 'quit':
+            try:
+                self.connection.send("", "QUIT")
+            finally:
+                print('<Exiting chat>')
+                exit(0)
+        elif game_exit_status == 'server':
+            self.connection.send("", "WAKE")
+        elif game_exit_status == 'client':
+            self.flip_mode()
+        else:
+            raise RuntimeError
 
     def mediate_chat(self):
         """
@@ -51,9 +70,18 @@ class ChatHandler:
                 if self.mode == 'XMIT':
                     message = input("Enter Message> ")
                     if message == '/q':
-                        self.connection.send("", "QUIT")
+                        self.connection.send("/q", "QUIT")
                         print('<Exiting chat>')
-                        return
+                        exit(0)
+                    elif message == '/p' and self.is_server():
+                        rps_game = GameHandler(self.connection, "server")
+                        self.flip_mode()
+                        game_exit_status = rps_game.mediate_game()
+                        self.handle_game_exit(game_exit_status)
+
+                    elif message == '/p':
+                        self.connection.send("", "PLAY")
+                        self.flip_mode()
                     else:
                         self.connection.send(message)
                         self.flip_mode()
@@ -61,13 +89,17 @@ class ChatHandler:
                     code, message = self.connection.recv()
                     if code == "QUIT":
                         print('<Chat connection closed by partner>')
-                        return
+                        exit(0)
+                    elif code == "PLAY" and self.is_server():
+                        rps_game = GameHandler(self.connection, "client")
+                        game_exit_status = rps_game.mediate_game()
+                        self.handle_game_exit(game_exit_status)
+                    elif code == "XXXX":
+                        print(message)
                     elif code == "WAKE":
-                        self.mode == 'XMIT'
+                        self.flip_mode()
                     elif code == "OVER":
                         print("REPLY >", message)
                         self.flip_mode()
-                    elif code == "XXXX":
-                        print("REPLY >", message)
                     else:
                         raise RuntimeError

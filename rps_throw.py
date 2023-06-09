@@ -6,31 +6,48 @@
 class RpsError(Exception):
     "Raised when trying to assign an invalid shape (other than: rock, paper, scissors, none) to an RpsThrow"
 
+
 class RpsThrow:
     shape: str
 
-    def __init__(self, shape):
-        if shape not in ('rock', 'paper', 'scissors'):
-            raise RpsError
-
-        self.shape = shape
+    def __init__(self):
+        self.shape: str = None
+        self.shape_dict = {
+            'r': 'rock',
+            'rock': 'rock',
+            'p': 'paper',
+            'paper': 'paper',
+            's': 'scissors',
+            'scissors': 'scissors',
+        }
 
     def set_shape(self, shape):
-        if shape not in ('rock', 'paper', 'scissors'):
+        if shape not in self.shape_dict.keys():
             raise RpsError
 
-        self.shape = shape
+        self.shape = self.shape_dict[shape]
+
+    def reset(self):
+        self.shape = None
 
     def __eq__(self, other):
         return self.shape == other.shape
 
     def __gt__(self, other):
-        return (self.shape == 'rock' and other.shape == 'scissors') or (self.shape == 'scissors' and other.shape == 'paper') or (self.shape == 'paper' and other.shape == 'rock')
+        return (self.shape == 'rock' and other.shape == 'scissors') or (
+                self.shape == 'scissors' and other.shape == 'paper') or (
+                       self.shape == 'paper' and other.shape == 'rock')
 
     def __lt__(self, other):
         return (self.shape == 'rock' and other.shape == 'paper') or (
                 self.shape == 'scissors' and other.shape == 'rock') or (
-                self.shape == 'paper' and other.shape == 'scissors')
+                       self.shape == 'paper' and other.shape == 'scissors')
 
-    def __repr__(self):
+    def __str__(self):
         return self.shape
+
+    def __add__(self, other):
+        return self.shape + other
+
+    def __radd__(self, other):
+        return other + self.shape
