@@ -3,16 +3,18 @@
 # Date: 6/7/2023
 # Description: The chat handler class accepts a ChatSocket and uses it to mediate a conversation,
 # implementing turn taking while sending and receiving messages, handling /q commands to quit, and /playrps
+#
+# Citations: None. While ChatSocket uses outside code, this class is original.
 from game_handler import *
 
 
 class ChatHandler:
-    def __init__(self, connection, mode, server=False):
+    def __init__(self, connection, mode:str, server:bool=False):
         """
         Class constructor
         :param connection: a ChatSocket to use for sending and receiving messages
         :param mode: Are we accepting messages, or is the channel clear for us to transmit?
-                    one of 'RECV' or 'XMIT'
+                    one of 'RECV' or 'XMIT' (str)
         :param server: Is this handler running for a server? Mostly used to determine how to handle
         requests to play a game [bool]
         """
@@ -29,9 +31,15 @@ class ChatHandler:
         print()
 
     def is_server(self):
+        """
+        Is this handler being as a server?
+        """
         return self.server
 
     def flip_mode(self):
+        """
+        Flip mode from transmit to receive, and vice versa
+        """
         self.mode = 'XMIT' if self.mode == 'RECV' else 'RECV'
 
     def handle_game_exit(self, game_exit_status):

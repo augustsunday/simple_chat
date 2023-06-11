@@ -10,6 +10,7 @@ import socket
 class ChatSocket:
     """
     The chat socket sends and receives messages.
+
     Messages consist of a string of utf-8 ascii characters of the format:
     LLLLCCCC[DDD...]
 
@@ -22,6 +23,7 @@ class ChatSocket:
         'PLAY' = Transmitter requesting switch to game mode.
         'EXIT' = Transmitter requesting end game mode.
     """
+    # init/enter/exit allow us to use keyword 'with'
     def __init__(self, sock: socket):
         self.sock = sock
 
@@ -70,6 +72,7 @@ class ChatSocket:
 
     def recv(self):
         """
+        Receive a message of arbitrary length from the connection
         :return:
         """
         # Get the length code first
