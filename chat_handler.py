@@ -1,15 +1,12 @@
-# Author: Colin Cummins
-# Github Username: augustsunday
-# Date: 6/7/2023
-# Description: The chat handler class accepts a ChatSocket and uses it to mediate a conversation,
-# implementing turn taking while sending and receiving messages, handling /q commands to quit, and /playrps
-#
-# Citations: None. While ChatSocket uses outside code, this class is original.
 from game_handler import *
 
 
 class ChatHandler:
-    def __init__(self, connection, mode:str, server:bool=False):
+    # Description: Used by both Client and Server functions, the ChatHandler communicates with the ChatHandler on the
+    # other end of the socket to coordinate communication between the two sides - implementing turn taking,
+    # sending and receiving messages, and handling special commands.
+    # If a player enters the /p command the ChatHandler temporarily hands control of the connection to a GameHandler
+    def __init__(self, connection, mode: str, server: bool = False):
         """
         Class constructor
         :param connection: a ChatSocket to use for sending and receiving messages
@@ -32,13 +29,13 @@ class ChatHandler:
 
     def is_server(self):
         """
-        Is this handler being as a server?
+        Is this handler being used as a server?
         """
         return self.server
 
     def flip_mode(self):
         """
-        Flip mode from transmit to receive, and vice versa
+        Toggle between XMIT and RECV modes
         """
         self.mode = 'XMIT' if self.mode == 'RECV' else 'RECV'
 
@@ -66,7 +63,8 @@ class ChatHandler:
 
     def mediate_chat(self):
         """
-        Mediates chat until someone quits or someone requests a game. On exit, returns a status to determine what to do next
+        Mediates chat until someone quits or someone requests a game.
+        On exit, returns a status to determine what to do next
         :return: Why did we exit the chat?
         'exit' - Someone quit the chat. Begin shutdown procedures
         'gclient' - Game mode activated, client is up first

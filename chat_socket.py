@@ -1,22 +1,16 @@
-# Author: Colin Cummins
-# Github Username: augustsunday
-# Date: 6/6/2023
-# Description:
-# Citations: Adapted from the 'MySocket' Class in 'Socket Programming HOWTO' by Gordon McMillan
-# https://docs.python.org/3/howto/sockets.html
 import socket
 
 
 class ChatSocket:
     """
-    The chat socket sends and receives messages.
+    Encapsulates an AF_INET connection and allows two-way asynchronous communication through the connection
 
     Messages consist of a string of utf-8 ascii characters of the format:
     LLLLCCCC[DDD...]
 
     L = Length code in decimal, left-filled with zeroes. This is the length of the actual data portion of the message.
     C = Special instruction codes:
-        'XXXX' = Normal transmission. Do not transmit - keep connection clear for further incoming transmissions.
+        'XXXX' = Normal transmission. Await further incoming transmissions.
         'WAKE' = No message content, just wake up by going into XMIT mode.
         'OVER' = Transmission complete. Ready to receive replies.
         'QUIT' = Transmitter has quit the chat and closed their connection. (Usually a signal for receiver to quit too)
@@ -35,7 +29,7 @@ class ChatSocket:
 
     def send(self, msg="", code="OVER"):
         """
-        Sends a fully formed message with length code and instruction code
+        Sends a fully formed message with length and instruction codes attached
         Code is set for "OVER" by default since back-and-forth conversation is the norm
         Use "XXXX" for sending multiple messages, broadcasting, etc.
         :param msg: Human-readable content of message

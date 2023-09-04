@@ -1,11 +1,7 @@
-# Author: Colin Cummins
-# Github Username: augustsunday
-# Date: 6/8/2023
-# Description: Takes over chat and runs a game of rock/paper/scissors until someone quits
 from rps_throw import RpsError, RpsThrow
 
-PROMPT_MESSAGE = 'Choose your play: (r)ock, (p)aper, (s)cissors'
-OPENING_MESSAGE = " started a game of Rock, Paper, Scissors!\n\n\
+PROMPT_MESSAGE: str = 'Choose your play: (r)ock, (p)aper, (s)cissors'
+OPENING_MESSAGE: str = " started a game of Rock, Paper, Scissors!\n\n\
 Instructions:\n\
 On your turn, enter (r)ock, (p)aper, or (s)cissors\n\
 Paper beats rock, rock beats scissors, scissors beats paper\n\
@@ -15,6 +11,10 @@ Special Commands:\n\
 
 
 class GameHandler:
+    # Description: Takes over chat and runs a game of rock/paper/scissors until someone quits
+    # Either player can exit the game early with:
+    # '/e' to exit the game and return to normal chat
+    # '/q' to quit chat entirely and close connection
     def __init__(self, connection, initiator):
         self.connection = connection
         self.initiator = initiator
@@ -54,8 +54,8 @@ class GameHandler:
             # Get plays from both players
             while client_play.shape is None:
                 try:
-                    self.connection.send(PROMPT_MESSAGE,"XXXX")
-                    self.connection.send("","WAKE")
+                    self.connection.send(PROMPT_MESSAGE, "XXXX")
+                    self.connection.send("", "WAKE")
                     code, play = self.connection.recv()
 
                     # Handle special commands

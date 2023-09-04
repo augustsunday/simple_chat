@@ -1,17 +1,15 @@
-# Author: Colin Cummins
-# Github Username: augustsunday
-# Date: 6/8/2023
-# Description: Implements a simple object to represent the 'throw' a player makes in a game of 'Rock, Paper, Scissors'
-# Used by game handler to compare and print player throws
 class RpsError(Exception):
     "Raised when trying to assign an invalid shape (other than: rock, paper, scissors, none) to an RpsThrow"
 
 
 class RpsThrow:
+    # Description: Implements a simple object to represent the 'throw' a player makes
+    # in a game of 'Rock, Paper, Scissors'
+    # Used by game handler to compare and display player throws
     shape: str
 
     def __init__(self):
-        self.shape: str = None
+        self.shape = None
         self.shape_dict = {
             'r': 'rock',
             'rock': 'rock',
