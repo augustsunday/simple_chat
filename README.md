@@ -43,9 +43,3 @@ These commands must be entered alone in a message
 * /e.....(e)exit the game and return to regular chat
 * /q.....(q)uit the game and exit chat as well
 * Game will prompt players to play (r)ock, (p)aper, or (s)cissors
-
-
-
-## License
-
-Simple Chat is open-source software licensed under the [MIT License](LICENSE).
